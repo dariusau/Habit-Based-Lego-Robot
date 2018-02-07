@@ -36,6 +36,7 @@ Select an option from the printed menu by pressing the corresponding number on y
 * **Keyboard** - Allows the user to control the robot movements with WASD controls. (Requires your cursor to be in the terminal window while running)
 * **Braitenburg** - Represents a Braitenburg machine
 * **Random** - Random movements by the robot
+* **Controller** - Allows the user to control robot movements with joystick controller. *Added to menu as of 2nd Feb.*
 
 7. After you have selected an option, you should see values being continuously printed on the terminal as shown below:
 ![Server-Result](/res/howto2.png)
