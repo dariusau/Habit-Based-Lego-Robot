@@ -3,6 +3,7 @@
 import csv
 import pandas as pd
 import numpy as np
+import mdp
 
 class DataManipulation:
 
@@ -13,7 +14,15 @@ class DataManipulation:
         self.__total_motor = None
         self.__total_sensor = None
         self.__total_us = None
-
+        self.__pcanodes = None
+        self.__DIMENSION = 6            
+        self.__first_array_bin = np.arange(0, self.__NUM_OF_BINS)
+        self.__second_array_bin = np.arange(0, (self.__NUM_OF_BINS**2), self.__NUM_OF_BINS)
+        self.__third_array_bin = np.arange(0, (self.__NUM_OF_BINS**3), self.__NUM_OF_BINS**2)
+        self.__fourth_array_bin = np.arange(0, (self.__NUM_OF_BINS**4), self.__NUM_OF_BINS**3)
+        self.__fifth_array_bin = np.arange(0, (self.__NUM_OF_BINS**5), self.__NUM_OF_BINS**4)
+        self.__sixth_array_bin = np.arange(0, (self.__NUM_OF_BINS**6), self.__NUM_OF_BINS**5)
+        
     """Normalizing motor values
 
     Normalized the left and right motor values ranging from -1000 to 1000, to be from -1 to 1
@@ -67,6 +76,9 @@ class DataManipulation:
 
     def normalized_minus1_to_1(self):
         pass
+
+    def get_dimension(self):
+        return self.__DIMENSION
 
     """Converting the total values to bin number
     
@@ -154,20 +166,26 @@ class DataManipulation:
     Take the array values and digitize it to bins to determine which bin each value belongs to.
     """
     def digitize_total_values(self, to_be_digitized, type):
-        first_array_bin = np.arange(0, self.__NUM_OF_BINS)
-        second_array_bin = np.arange(0, (self.__NUM_OF_BINS**2), self.__NUM_OF_BINS)
-        third_array_bin = np.arange(0, (self.__NUM_OF_BINS**3), self.__NUM_OF_BINS**2)
 
         if type == '2d':
             #numpy digitize assigns bin from 1 to 10.  but we want to use 0 to 9    
-            xArray = np.digitize(to_be_digitized % self.__NUM_OF_BINS, first_array_bin) - 1
-            yArray = np.digitize(to_be_digitized, second_array_bin) - 1
+            xArray = np.digitize(to_be_digitized % self.__NUM_OF_BINS, self.__first_array_bin) - 1
+            yArray = np.digitize(to_be_digitized, self.__second_array_bin) - 1
 
             return xArray, yArray
         elif type == '3d':
             #numpy digitize assigns bin from 1 to 10.  but we want to use 0 to 9
-            xArray = np.digitize(to_be_digitized % self.__NUM_OF_BINS, first_array_bin) - 1
-            yArray = np.digitize(to_be_digitized % (self.__NUM_OF_BINS**2), second_array_bin) - 1
-            zArray = np.digitize(to_be_digitized, third_array_bin) - 1
+            xArray = np.digitize(to_be_digitized % self.__NUM_OF_BINS, self.__first_array_bin) - 1
+            yArray = np.digitize(to_be_digitized % (self.__NUM_OF_BINS**2), self.__second_array_bin) - 1
+            zArray = np.digitize(to_be_digitized, self.__third_array_bin) - 1
 
             return xArray, yArray, zArray
+
+    def digitize_cycle(self, to_be_digitized):
+        xArray = np.digitize(to_be_digitized % self.__NUM_OF_BINS, self.__first_array_bin) - 1 # ls
+        yArray = np.digitize(to_be_digitized % (self.__NUM_OF_BINS**2), self.__second_array_bin) - 1 #rs
+        zArray = np.digitize(to_be_digitized % (self.__NUM_OF_BINS**3), self.__third_array_bin) - 1 #lus
+        wArray = np.digitize(to_be_digitized % (self.__NUM_OF_BINS**4), self.__fourth_array_bin) - 1#rus
+        uArray = np.digitize(to_be_digitized % (self.__NUM_OF_BINS**5), self.__fifth_array_bin) - 1 #lm
+        vArray = np.digitize(to_be_digitized , self.__sixth_array_bin) - 1 #rm
+        return xArray, yArray, zArray, wArray, uArray, vArray
